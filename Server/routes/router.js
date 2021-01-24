@@ -82,7 +82,7 @@ router.post('/register', userMiddleware.validateRegister, (req, res, next) => {
 
 
 router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
-    console.log(req.body.username + "  " + req.body.password);
+    // console.log(req.body.username + "  " + req.body.password);
     db.query(
         `SELECT * FROM users WHERE username = ${db.escape(req.body.username)};`,
         (err, result) => {
@@ -128,9 +128,46 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
         }
     );
 });
+
+
+
+router.get("/search_node", (req, res, next) => {
+    var query = "SELECT pnodeid as id FROM isos.ercot_da where date=(select max(date) FROM isos.ercot_da) group by pnodeid order by pnodeid;";
+    var reply = {};
+    db.query(query, (err, result) => {
+        if (err || !result.length) return res.send({ msg: err });
+        // var temp = JSON.parse(JSON.stringify(result));
+        result.forEach(e => e.group = e.id.length);
+        reply["ercot_da"] = result;
+
+        var query1 = "SELECT pnodeid as id FROM isos.ercot_rt where date=(select max(date) FROM isos.ercot_rt) group by pnodeid order by pnodeid;";
+        db.query(query1, (err, result1) => {
+            if (err || !result1.length) return res.send({ msg: err });
+            //temp = JSON.parse(JSON.stringify(result));
+            result.forEach(e => e.group = e.id.length);
+            reply['ercot_rt'] = result;
+            res.send({ msg: "ok", "nodes": reply });
+            console.log("search_node");
+        });
+    })
+})
+
+router.get("/search_link", (req, res, next) => {
+    // var query = "SELECT	source, sink, hedgetype FROM isos.ercot_crr_bids GROUP BY source, sink,	hedgetype ;";
+    // var query = "SELECT source, sink, hedgetype FROM isos.ercot_crr_auction GROUP BY source, sink, hedgetype;";
+    //var query = "select tt.source, tt.sink, tt.hedgetype FROM (SELECT source, sink, hedgetype FROM isos.ercot_crr_bids GROUP BY source , sink , hedgetype UNION SELECT source, sink, hedgetype FROM isos.ercot_crr_auction group by source, sink, hedgetype) as tt limit 1000";
+
+    // var query = "SELECT source, sink, hedgetype FROM isos.ercot_crr_auction GROUP BY source, sink, hedgetype;";
+    var query = "SELECT source, sink as target FROM isos.ercot_crr_nodes ;"
+    db.query(query, (err, result) => {
+        if (err || !result.length) return res.send({ msg: err });
+        res.send({ msg: "ok", "links": result });
+        console.log("serach_link");
+    });
+});
+
 router.get('/secret-route', userMiddleware.isLoggedIn, (req, res, next) => {
     console.log(req.userData);
     res.send('This is the secret content. Only logged in users can see that!');
 });
-
 module.exports = router;

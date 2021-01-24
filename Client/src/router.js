@@ -5,12 +5,18 @@ import Home from './views/Home.vue'
 import Loading from './views/Loading.vue'
 import Dashboard from './views/Dashboard.vue'
 import Admin from './views/Admin.vue'
+import Train from './components/Train.vue'
 
 Vue.use(Router);
 const routes = [{
         path: '/',
         name: 'home',
         component: Home
+    },
+    {
+        path: '/train',
+        name: 'train',
+        component: Train,
     },
     {
         path: '/loading',
@@ -34,14 +40,13 @@ const routes = [{
         component: Dashboard,
         meta: {
             requiresAuth: true
-        }
+        },
     },
     {
         path: '*',
         redirect: '/'
     }
 ];
-
 
 const router = new Router({
     mode: "history",

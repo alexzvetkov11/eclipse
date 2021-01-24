@@ -1,12 +1,5 @@
-install
-  Create Users table on ios database of mysql.
-  
-  client build:
-    `npm install` on root directory
-    `npm start`
-  Server build:
-    `cd server` on root directory
-    `node index`
+when we can chat using skype???
+i think Chatting on freelancer is uncomfortable for each other.
+could you add me ?  live:.cid.1365d63b851b5c4a
 
-
-    
+or write your id in here of this Readme.md....
